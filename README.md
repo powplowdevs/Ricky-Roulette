@@ -11,7 +11,7 @@ Welcome to **Ricky Roulette**—the game you never knew you needed, and the game
 
 - **Flying Money Bags**: Because winning isn't just about numbers—it's about watching money soar majestically across your screen.
 
-- **Popup Achievements**: With over 50 achievements, you're always just one step away from feeling accomplished. Or confused. Either way, you'll feel something! <sub><sup>(i cant feel anything anymore)</sub></sup>
+- **Popup Achievements**: With over 50 achievements, you're always just one step away from feeling accomplished. Or confused. Either way, you will feel something! <sub><sup>(i cant feel anything anymore)</sub></sup>
 
 - **In-App Purchase Prompts**: Just in case you didn’t get enough popups <sub><sup>(you sicko)</sub></sup>, these ones will ask if youd like to remove ads <sub><sup>(you cant)</sub></sup>. No pressure... except, well, constant pressure.
 

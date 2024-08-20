@@ -58,7 +58,8 @@ Why in the hell would you want your name on this? (hmu tho if u trynna add somet
 2. Nicholas
 3. Martin Shkreli
 4. The Armenian Genocide
-5. Many poor souls who have been forced to "play test"
+5. Ryan "Gootecks" Gutierrez
+6. Many poor souls who have been forced to "play test"
 
 
 

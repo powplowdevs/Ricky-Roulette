@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ricky Roulette</title>
@@ -16,6 +17,15 @@
             
             position: relative;
             color: white;
+        }
+        #video-ad{
+            z-index: 10; 
+            top: 0;
+            position: fixed; 
+            margin: auto; 
+            left: 40%;
+            top: 30%; 
+
         }
         .container {
             max-width: 600px;
@@ -478,6 +488,21 @@
     </style>
 </head>
 <body>
+    <!-- midroll ads -->
+    <video autoplay style="z-index: 1000; top: 0; position: fixed; margin: auto; left: 20%;
+    top: 20%; "
+    id="video-ad"
+    class="video-js"
+    controls
+    preload="auto"
+    >
+    <source src="ad.mp4" type="video/mp4" />
+    </video>
+
+    <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+
+
+
     <div class="container">
         <h1>Ricky Roulette</h1>
         <div class="roulette-container">
@@ -520,6 +545,7 @@
 
 
     <script>
+        videojs('player', {autoplay: true});
         document.querySelectorAll('.node').forEach(node => {
             node.addEventListener('click', () => {
                 document.querySelectorAll('.node').forEach(n => {
@@ -531,6 +557,8 @@
             });
         });
     </script>
+
+    
     <div class="skill-tree">
         <div class="node" style="top: 50%; left: 50%;" id="root">Root</div>
         <div class="node" style="top: 30%; left: 30%;" id="skill1">Skill 1</div>
@@ -1343,6 +1371,7 @@
             button.style.border = 'none';
             button.style.borderRadius = '5px';
             button.style.cursor = 'pointer';
+            button.style.zIndex= '99999999999999';
         
             button.addEventListener('click', () => {
                 startPlaying(); // Calls your existing startPlaying() function
@@ -1353,9 +1382,24 @@
             document.body.appendChild(overlay);
         };
         
+        const createAdd = (t,l) => {
+            const add = document.createElement('video');
+            const vsrc = document.createElement('source');
+            vsrc.src = "ad.mp4"
+            vsrc.type = "video/mp4"
+            add.id = 'video-ad';
+            add.classList = "video.js"
+            add.preload = "auto"
+            add.appendChild(vsrc)
+            add.style.top = t;
+            add.style.left = l;
+            
+            document.body.appendChild(add);
+        }
+
         // Initialize the overlay
         createOverlay();
-
+        createAdd("20%","20%")
 
         // Function to handle results and play the big win sound
         function handleResult(betType) {
@@ -1364,6 +1408,7 @@
             if (Math.random() < 0.5) {
                 sounds.popup.play();
                 showRandomPopups();
+                createAdd(Math.floor(Math.random() * 99) + 1 + "%", Math.floor(Math.random() *99) + 1 + "%")
             }
             const sectionResult = result % numSections;
             const outcome = sectionResult % 2 === 0 ? 'red' : 'black';

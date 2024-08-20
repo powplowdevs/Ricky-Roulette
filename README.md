@@ -56,7 +56,9 @@ Why in the hell would you want your name on this? (hmu tho if u trynna add somet
 ## Current Contributors
 1. Lucas
 2. Nicholas
-3. Many poor souls who have been forced to "play test"
+3. Martin Shkreli
+4. The Armenian Genocide
+5. Many poor souls who have been forced to "play test"
 
 
 

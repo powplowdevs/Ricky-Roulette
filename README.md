@@ -1,5 +1,7 @@
 # Ricky-Roulette
-Digital manifestation of the consequences of human development...
+Digital manifestation of the consequences of human development... Anyways play now!!! 
+
+-https://powplowdevs.github.io/Ricky-Roulette/
 
 ### Created by Ayoub and Ricky by asking <sub>(forceing)</sub> ChatGPT to write the code for us....
 

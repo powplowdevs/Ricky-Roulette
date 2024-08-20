@@ -1316,7 +1316,46 @@
 
         // Example usage: Start playing when the page loads
         document.addEventListener('DOMContentLoaded', startPlaying);
-        startPlaying()
+
+        // Create and style the fullscreen overlay
+        const createOverlay = () => {
+            const overlay = document.createElement('div');
+            overlay.id = 'fullscreen-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            overlay.style.color = '#fff';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = '1000'; // Ensures it is on top of other elements
+        
+            const button = document.createElement('button');
+            button.id = 'start-button';
+            button.textContent = 'Start';
+            button.style.padding = '15px 30px';
+            button.style.fontSize = '18px';
+            button.style.backgroundColor = '#007bff';
+            button.style.color = '#fff';
+            button.style.border = 'none';
+            button.style.borderRadius = '5px';
+            button.style.cursor = 'pointer';
+        
+            button.addEventListener('click', () => {
+                startPlaying(); // Calls your existing startPlaying() function
+                document.body.removeChild(overlay); // Remove the overlay after starting
+            });
+        
+            overlay.appendChild(button);
+            document.body.appendChild(overlay);
+        };
+        
+        // Initialize the overlay
+        createOverlay();
+
 
         // Function to handle results and play the big win sound
         function handleResult(betType) {
@@ -1362,7 +1401,6 @@
             console.log("AHGHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
             // Play big win sound randomly
             if (Math.random() < 2 / 7) {
-                startPlaying()
                 sounds.bigWin.play();
             }
 

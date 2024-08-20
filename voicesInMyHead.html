@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricky Roulette</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
+            animation: rainbow 10s ease infinite;
+            
+            position: relative;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .roulette-container {
+            position: relative;
+            display: inline-block;
+            z-index: 2;
+        }
+        canvas {
+            border: 10px solid #000;
+            border-radius: 50%;
+            transition: border-color 0.5s ease;
+        }
+        .ball {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.2s linear;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .money-counter {
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+            margin-top: 20px;
+        }
+        .popup {
+            position: fixed;
+            background-color: white;
+            color: black;
+            border: 2px solid red;
+            padding: 10px;
+            box-shadow: 0 0 10px red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            cursor: pointer;
+            animation: wiggle 1s infinite;
+            text-align: center;
+        }
+        .popup-text {
+            font-size: 14px;
+            text-align: center;
+        }
+        .money-bag {
+            position: absolute;
+            background-color: gold;
+            width: 50px;
+            height: 30px;
+            border-radius: 10px;
+            animation: fly 5s linear infinite;
+            z-index: 1;
+            background-image: url('https://example.com/money-bag.png'); /* Replace with your money bag image URL */
+            background-size: cover;
+        }
+        .cash {
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            background-color: green;
+            color: white;
+            border: 1px solid black;
+            border-radius: 5px;
+            text-align: center;
+            animation: fall 5s linear infinite;
+            z-index: 1;
+        }
+        .in-app-purchase {
+            font-size: 18px;
+            margin: 20px;
+            background-color: gold;
+            padding: 10px;
+            border-radius: 10px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .login-container {
+            margin-top: 20px;
+            z-index: 2;
+        }
+        .login-input {
+            padding: 5px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .login-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #resultText {
+            font-size: 36px;
+            font-weight: bold;
+            color: yellow;
+            margin-top: 20px;
+        }
+        @keyframes fly {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(100vw, 100vh) rotate(360deg); }
+        }
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes fall {
+            from { transform: translateY(-100px); }
+            to { transform: translateY(100vh); }
+        }
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        @keyframes stars {
+            0% { opacity: 1; transform: translateY(-100vh) scale(1); }
+            100% { opacity: 0; transform: translateY(100vh) scale(2); }
+        }
+        /* Purchase Prompt Styles */
+        #purchasePrompt {
+            background-color: white;
+            color: black;
+            border: 2px solid red;
+            padding: 20px;
+            box-shadow: 0 0 10px red;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 100;
+            cursor: pointer;
+            animation: wiggle 1s infinite;
+        }
+
+        #purchasePrompt button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: lightcoral;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #purchasePrompt button:hover {
+            background-color: darkred;
+        }
+
+        /* Fake Ads Styles */
+        .fake-ad {
+            background-color: lightblue;
+            border: 1px solid blue;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+}
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: yellow;
+            border-radius: 50%;
+            animation: confetti 2s infinite;
+        }
+        /* Fake Ad Styles */
+        .fake-ad {
+            position: absolute;
+            background-color: lightblue;
+            border: 1px solid blue;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+
+        .star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px yellow;
+            animation: stars 3s infinite;
+        }
+
+        /* Battle Pass Styles */
+        .battle-pass {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+        }
+
+        .progress-bar {
+            background-color: #333;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            width: 100%;
+            height: 20px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .completion {
+            background-color: gold;
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: width 0.5s ease;
+        }
+
+        .rewards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .reward {
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+            background-color: #444;
+            border: 2px solid gold;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .reward img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+        }
+
+        /* Side Banner Ad Styles */
+        .side-banner {
+            position: fixed;
+            top: 50%;
+            width: 200px;
+            height: 100px;
+            background-color: lightgrey;
+            border: 2px solid grey;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .side-banner.left {
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+
+        .reward {
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            display: inline-block;
+            font-size: 20px;
+            color: #fff;
+            border-radius: 5px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .cash {
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            background-color: green;
+            color: white;
+            border: 1px solid black;
+            border-radius: 5px;
+            text-align: center;
+            animation: fall 5s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            from { transform: translateY(-100px); }
+            to { transform: translateY(100vh); }
+        }
+
+        .skill-tree {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .node {
+            position: absolute;
+            background: #444;
+            border-radius: 50%;
+            padding: 10px;
+            color: white;
+            box-shadow: 0 0 10px #ff0000;
+            transition: background 0.5s ease;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .node:hover {
+            background: #666;
+        }
+
+        .node:active {
+            background: #888;
+        }
+
+        .link {
+            position: absolute;
+            background: #fff;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #fff, transparent);
+            z-index: -1;
+            transition: background 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        @keyframes randomMove {
+            from { transform: translate(0, 0); }
+            to { transform: translate(calc(-50vw + 100px * random()), calc(-50vh + 100px * random())); }
+        }
+
+        .random-effect {
+            animation: randomMove 2s infinite;
+        }
+
+        .skill-tree-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px;
+        }
+
+        .skill-node {
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            width: 150px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .skill-node:hover {
+            background: #e0e0e0;
+            border-color: #bbb;
+        }
+
+        .skill-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .skill-status {
+            font-size: 14px;
+            color: #888;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
+        .unlocked .skill-status {
+            color: #4caf50;
+        }
+
+
+        .side-banner.right {
+            right: 0;
+            transform: translateY(-50%);
+        }
+
+        #moneyBagsContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .money-bag {
+            position: absolute;
+            background-color: gold;
+            width: 50px;
+            height: 30px;
+            border-radius: 10px;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRoHLLfL7Y7N9KAO8lRUpvisZwmMY6LZ2lWQ&s'); /* Replace with your money bag image URL */
+            background-size: cover;
+            animation: fly 10s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fly {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(100vw, 100vh) rotate(360deg);
+            }
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ricky Roulette</h1>
+        <div class="roulette-container">
+            <canvas id="rouletteWheel" width="300" height="300"></canvas>
+            <div class="ball"></div>
+        </div>
+        <p>
+            <button onclick="spinWheel('red')">Bet on Red</button>
+            <button onclick="spinWheel('black')">Bet on Black</button>
+            <button onclick="spinWheel('even')">Bet on Even</button>
+            <button onclick="spinWheel('odd')">Bet on Odd</button>
+        </p>
+        <div id="moneyCounter" class="money-counter">Money Lost: $0</div>
+        <div id="resultText"></div>
+        <div class="in-app-purchase" onclick="purchaseItem('spins')">Buy More Spins: $9.99</div>
+        <div class="in-app-purchase" onclick="purchaseItem('colors')">Unlock Premium Colors: $4.99</div>
+        <div class="in-app-purchase" onclick="purchaseItem('battlePass')">Battle Pass: $19.99</div>
+        <div class="in-app-purchase" onclick="purchaseItem('voices')">Get Rid of Voices: $99.99</div>
+        <div id="purchaseResult"></div>
+    </div>
+
+    <!-- Purchase Prompt Popup -->
+    <div id="purchasePrompt" class="popup" style="display: none;">
+        <div class="popup-text">To continue using this feature, please make a purchase:</div>
+        <button onclick="purchaseItem('voices')">Remove Annoying Voices: $99.99</button>
+        <button onclick="closePopup('purchasePrompt')">Close</button>
+    </div>
+
+    <div class="battle-pass">
+        <h2>Battle Pass</h2>
+        <div id="battlePassProgress" class="progress-bar">
+            <div id="battlePassCompletion" class="completion"></div>
+        </div>
+        <div id="battlePassRewards" class="rewards">
+            <!-- Rewards will be dynamically added here -->
+        </div>
+    </div>
+    
+    <div id="moneyBagsContainer"></div>
+
+
+    <script>
+        document.querySelectorAll('.node').forEach(node => {
+            node.addEventListener('click', () => {
+                document.querySelectorAll('.node').forEach(n => {
+                    n.classList.toggle('random-effect');
+                });
+                document.querySelectorAll('.link').forEach(link => {
+                    link.style.background = Math.random() < 0.5 ? 'linear-gradient(to bottom, #fff, #f00)' : 'linear-gradient(to bottom, #fff, #00f)';
+                });
+            });
+        });
+    </script>
+    <div class="skill-tree">
+        <div class="node" style="top: 50%; left: 50%;" id="root">Root</div>
+        <div class="node" style="top: 30%; left: 30%;" id="skill1">Skill 1</div>
+        <div class="node" style="top: 30%; left: 70%;" id="skill2">Skill 2</div>
+        <div class="node" style="top: 70%; left: 30%;" id="skill3">Skill 3</div>
+        <div class="node" style="top: 70%; left: 70%;" id="skill4">Skill 4</div>
+
+        <div class="link" style="top: 50%; left: 50%; height: 20%; transform: rotate(45deg);"></div>
+        <div class="link" style="top: 50%; left: 50%; height: 20%; transform: rotate(-45deg);"></div>
+        <div class="link" style="top: 30%; left: 30%; height: 40%; transform: rotate(90deg);"></div>
+        <div class="link" style="top: 30%; left: 70%; height: 40%; transform: rotate(90deg);"></div>
+        <div class="link" style="top: 70%; left: 30%; height: 40%; transform: rotate(0deg);"></div>
+        <div class="link" style="top: 70%; left: 70%; height: 40%; transform: rotate(0deg);"></div>
+    </div>
+    <div class="skill-tree-container">
+        <div class="skill-node" id="skill1" onclick="unlockSkill('skill1')">
+            <span class="skill-name">Skill 1</span>
+            <span class="skill-status">Locked</span>
+        </div>
+        <div class="skill-node" id="skill2" onclick="unlockSkill('skill2')">
+            <span class="skill-name">Skill 2</span>
+            <span class="skill-status">Locked</span>
+        </div>
+        <div class="skill-node" id="skill3" onclick="unlockSkill('skill3')">
+            <span class="skill-name">Skill 3</span>
+            <span class="skill-status">Locked</span>
+        </div>
+        <div class="skill-node" id="skill4" onclick="unlockSkill('skill4')">
+            <span class="skill-name">Skill 4</span>
+            <span class="skill-status">Locked</span>
+        </div>
+    </div>    
+
+    <div class="login-container">
+        <input type="text" id="username" class="login-input" placeholder="Username">
+        <input type="password" id="password" class="login-input" placeholder="Password">
+        <button class="login-button" onclick="login()">Login</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('rouletteWheel');
+        const ctx = canvas.getContext('2d');
+        const ball = document.querySelector('.ball');
+        const moneyCounter = document.getElementById('moneyCounter');
+        const resultText = document.getElementById('resultText');
+        const resultDisplay = document.getElementById('purchaseResult');
+        const numSections = 12;
+        const sectionAngle = 2 * Math.PI / numSections;
+        let currentRotation = 0;
+        let totalLost = 0;
+        let wheelSpinning = false;
+
+    
+
+        const voiceMessages = [
+            "One more spin!", "You're so close!", "Almost a big win!",
+            "You can do it!", "Feeling lucky?", "Try again!", "Keep going!",
+            "Don't stop now!", "Just one more!", "Are you sure?", "Think twice!",
+            "No way!", "Really?", "This is your moment!", "Big win incoming!",
+            "Just a little more!", "You got this!", "Don't give up!", "Stay in the game!",
+            "The jackpot is yours!", "You're on fire!",   "Just a little bit longer!", "A win is just around the corner!"
+        ];
+
+        function showPopup(message) {
+            sounds.popup.play();
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.textContent = message;
+            document.body.appendChild(popup);
+
+            const voiceMessage = voiceMessages[Math.floor(Math.random() * voiceMessages.length)];
+            const voiceSound = new Audio(`https://freesound.org/data/previews/174/174031_2398406-lq.mp3`);
+            voiceSound.play();
+
+            popup.addEventListener('click', () => {
+                popup.remove();
+                // Show two more popups
+                showRandomPopups();
+            });
+        }
+
+        function showPurchasePrompt() {
+         document.getElementById('purchasePrompt').style.display = 'flex';
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+        }
+
+        function createSideBanner(position) {
+        const banner = document.createElement('div');
+        banner.className = 'side-banner ' + position;
+        banner.textContent = "Special Offer! Buy Now!";
+        
+        document.body.appendChild(banner);
+
+        // Remove the banner after some time
+        setTimeout(() => {
+            banner.remove();
+        }, 10000); // Adjust duration as needed
+        }
+
+
+        const battlePassCompletion = document.getElementById('battlePassCompletion');
+        const battlePassRewards = document.getElementById('battlePassRewards');
+
+        let progress = 0; // Current progress in the battle pass (0-100)
+
+        // Example rewards data
+        const rewards = [
+            { name: 'Skin 1', image: 'https://m.media-amazon.com/images/I/91QviYo3OZL.jpg' },
+            { name: 'Skin 2', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST9Ovj8Atu7BvILecgi7F5FeXTR8fWC0bsGw&s' },
+            { name: 'Skin 3', image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/a0/3d/14/a03d1404-7236-65dc-1853-d420d666a959/source/512x512bb.jpg' },
+            { name: 'Skin 4', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0MPdMqzKnuXwjpwtm7XAVLu3y17Aa3_pepg&s' },
+        ];
+
+        function createMoneyBag() {
+            const moneyBag = document.createElement('div');
+            moneyBag.className = 'money-bag';
+            moneyBag.style.left = `${Math.random() * 100}vw`;
+            moneyBag.style.top = `${Math.random() * 100}vh`;
+            document.getElementById('moneyBagsContainer').appendChild(moneyBag);
+
+            setTimeout(() => {
+                moneyBag.remove();
+            }, 10000); // Remove the money bag after 10 seconds
+        }
+
+        setInterval(createMoneyBag, 500); // Create a new money bag every 500ms
+
+
+        // Simulate unlocking skills
+        function unlockSkill(skillId) {
+            const skillNode = document.getElementById(skillId);
+            
+            if (skillNode.classList.contains('unlocked')) {
+                alert('Skill already unlocked!');
+                return;
+            }
+
+            skillNode.classList.add('unlocked');
+            skillNode.querySelector('.skill-status').textContent = 'Unlocked';
+
+            // Here you can add logic to handle the unlocking of skills,
+            // e.g., update player stats, award points, etc.
+        }
+
+        // Example of unlocking skills programmatically
+        function unlockInitialSkills() {
+            unlockSkill('skill1'); // Unlock the first skill by default
+        }
+
+        document.addEventListener('DOMContentLoaded', unlockInitialSkills);
+
+
+        // Function to update battle pass progress
+        function updateBattlePass(progress) {
+            if (progress > 100) progress = 100;
+            battlePassCompletion.style.width = `${progress}%`;
+
+            // Add rewards based on progress
+            const unlockedRewards = Math.floor(progress / 25); // 25% per reward
+            battlePassRewards.innerHTML = '';
+            for (let i = 0; i < unlockedRewards; i++) {
+                const reward = rewards[i];
+                const rewardDiv = document.createElement('div');
+                rewardDiv.className = 'reward';
+                rewardDiv.innerHTML = `<img src="${reward.image}" alt="${reward.name}"><br>${reward.name}`;
+                battlePassRewards.appendChild(rewardDiv);
+            }
+        }
+
+        // Example usage: Update progress
+        function simulateProgress() {
+            progress += 10;
+            updateBattlePass(progress);
+        }
+
+        // Simulate progress update every 3 seconds
+        setInterval(simulateProgress, 3000); // Adjust interval as needed
+
+        function applySkinEffect(effect) {
+            // Remove existing effect styles
+            document.body.style.background = '';
+            document.body.style.animation = '';
+
+            // Apply new effect based on selection
+            switch (effect) {
+                case 'flash':
+                    document.body.style.animation = 'flashColors 2s infinite';
+                    break;
+                case 'spiral':
+                    document.body.style.background = 'conic-gradient(from 0deg, red, yellow, green, blue, red)';
+                    document.body.style.backgroundSize = '400% 400%';
+                    document.body.style.animation = 'spiralColors 4s infinite';
+                    break;
+                case 'scan':
+                    document.body.style.background = 'linear-gradient(to right, red, yellow, green, blue)';
+                    document.body.style.backgroundSize = '200% 100%';
+                    document.body.style.animation = 'scanColors 3s infinite';
+                    break;
+                case 'random':
+                    document.body.style.animation = 'randomColors 2s infinite';
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Define keyframes dynamically
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = `
+        @keyframes flashColors {
+            0% { background-color: red; }
+            25% { background-color: yellow; }
+            50% { background-color: green; }
+            75% { background-color: blue; }
+            100% { background-color: red; }
+        }
+        @keyframes spiralColors {
+            0% { background: conic-gradient(from 0deg, red, yellow, green, blue, red); }
+            100% { background: conic-gradient(from 360deg, red, yellow, green, blue, red); }
+        }
+        @keyframes scanColors {
+            0% { background: linear-gradient(to right, red, yellow, green, blue); }
+            100% { background: linear-gradient(to right, blue, green, yellow, red); }
+        }
+        @keyframes randomColors {
+            0% { background-color: #${Math.floor(Math.random()*16777215).toString(16)}; }
+            25% { background-color: #${Math.floor(Math.random()*16777215).toString(16)}; }
+            50% { background-color: #${Math.floor(Math.random()*16777215).toString(16)}; }
+            75% { background-color: #${Math.floor(Math.random()*16777215).toString(16)}; }
+            100% { background-color: #${Math.floor(Math.random()*16777215).toString(16)}; }
+        }
+        `;
+        document.head.appendChild(styleSheet);
+
+
+
+
+        // Create side banners on both sides
+        function showSideBanners() {
+            createSideBanner('left');
+            createSideBanner('right');
+        }
+
+        // Show side banners at regular intervals
+        setInterval(showSideBanners, 15000); // Adjust interval as needed
+
+        function showRandomAd() {
+            sounds.popup.play();
+            const adMessages = [
+                "Buy Coins Now!",
+                "Win Real Money!",
+                "Download Our App!",
+                "Exclusive Offer!",
+                "Limited Time Sale!",
+                "Huge Discounts Available!",
+                "Claim Your Prize!",
+                "Get Free Rewards!",
+            ];
+
+            const ad = document.createElement('div');
+            ad.className = 'fake-ad';
+            ad.textContent = adMessages[Math.floor(Math.random() * adMessages.length)];
+            
+            // Randomize size
+            const adWidth = Math.floor(Math.random() * 150) + 100; // 100px to 250px
+            const adHeight = Math.floor(Math.random() * 50) + 30; // 30px to 80px
+            ad.style.width = `${adWidth}px`;
+            ad.style.height = `${adHeight}px`;
+            
+            // Randomize position
+            const x = Math.random() * (window.innerWidth - adWidth);
+            const y = Math.random() * (window.innerHeight - adHeight);
+            ad.style.left = `${x}px`;
+            ad.style.top = `${y}px`;
+
+            // Append to body and remove after some time
+            document.body.appendChild(ad);
+
+            setTimeout(() => {
+                ad.remove();
+            }, 5000); // Adjust duration as needed
+        }
+
+        // Show random ads at regular intervals
+        setInterval(showRandomAd, 5000); // Adjust interval as needed
+
+
+
+        const achievements = {
+        firstSpin: false,
+        bigWin: false,
+        highScore: false,
+        winTenTimes: false,
+        spinTwentyTimes: false,
+        betOnRed: false,
+        betOnBlack: false,
+        betOnEven: false,
+        betOnOdd: false,
+        highBet: false,
+        winFiveHundred: false,
+        spinFiftyTimes: false,
+        winThousand: false,
+        highRoller: false,
+        jackpot: false,
+        luckyNumber: false,
+        luckySeven: false,
+        luckyThirteen: false,
+        rollTwentyTimes: false,
+        spinOneHundredTimes: false,
+        highBetWins: false,
+        highBetLosses: false,
+        winTwentyFiveTimes: false,
+        spinFiveHundredTimes: false,
+        allColorsUnlocked: false,
+        premiumColors: false,
+        battlePass: false,
+        voicesDisabled: false,
+        purchaseItem: false,
+        scoreOverFiveThousand: false,
+        scoreOverTenThousand: false,
+        scoreOverTwentyThousand: false,
+        tenBigWins: false,
+        unlockExtraFeatures: false,
+        completeQuest: false,
+        earnXP: false,
+        levelUp: false,
+        unlockAllSkins: false,
+        unlockSpecialSkins: false,
+        collectAllMoneyBags: false,
+        unlockSecretFeature: false,
+        highRollerStatus: false,
+        VIPStatus: false,
+        bigSpender: false,
+        luckySpin: false,
+        randomJackpot: false,
+        winJackpot: false
+    };
+
+    let highScore = 0;
+    let userScore = 0;
+    let spins = 0;
+    let wins = 0;
+    let bets = [];
+    let betAmounts = [];
+    let bigWins = 0;
+    let totalXP = 0;
+
+    function checkAchievements() {
+        if (!achievements.firstSpin && spins > 0) {
+            achievements.firstSpin = true;
+            showPopup("Achievement Unlocked: First Spin!");
+        }
+
+        if (!achievements.bigWin && userScore >= 10000) {
+            achievements.bigWin = true;
+            showPopup("Achievement Unlocked: Big Win!");
+        }
+
+        if (!achievements.highScore && userScore > highScore) {
+            highScore = userScore;
+            achievements.highScore = true;
+            showPopup("Achievement Unlocked: High Score!");
+        }
+
+        if (!achievements.winTenTimes && wins >= 10) {
+            achievements.winTenTimes = true;
+            showPopup("Achievement Unlocked: Win Ten Times!");
+        }
+
+        if (!achievements.spinTwentyTimes && spins >= 20) {
+            achievements.spinTwentyTimes = true;
+            showPopup("Achievement Unlocked: Spin Twenty Times!");
+        }
+
+        if (!achievements.betOnRed && bets.includes('red')) {
+            achievements.betOnRed = true;
+            showPopup("Achievement Unlocked: Bet on Red!");
+        }
+
+        if (!achievements.betOnBlack && bets.includes('black')) {
+            achievements.betOnBlack = true;
+            showPopup("Achievement Unlocked: Bet on Black!");
+        }
+
+        if (!achievements.betOnEven && bets.includes('even')) {
+            achievements.betOnEven = true;
+            showPopup("Achievement Unlocked: Bet on Even!");
+        }
+
+        if (!achievements.betOnOdd && bets.includes('odd')) {
+            achievements.betOnOdd = true;
+            showPopup("Achievement Unlocked: Bet on Odd!");
+        }
+
+        if (!achievements.highBet && betAmounts.some(amount => amount >= 1000)) {
+            achievements.highBet = true;
+            showPopup("Achievement Unlocked: High Bet!");
+        }
+
+        if (!achievements.winFiveHundred && userScore >= 500) {
+            achievements.winFiveHundred = true;
+            showPopup("Achievement Unlocked: Win Five Hundred!");
+        }
+
+        if (!achievements.spinFiftyTimes && spins >= 50) {
+            achievements.spinFiftyTimes = true;
+            showPopup("Achievement Unlocked: Spin Fifty Times!");
+        }
+
+        if (!achievements.winThousand && userScore >= 1000) {
+            achievements.winThousand = true;
+            showPopup("Achievement Unlocked: Win One Thousand!");
+        }
+
+        if (!achievements.highRoller && betAmounts.some(amount => amount >= 5000)) {
+            achievements.highRoller = true;
+            showPopup("Achievement Unlocked: High Roller!");
+        }
+
+        if (!achievements.jackpot && Math.random() < 0.01) {
+            achievements.jackpot = true;
+            showPopup("Achievement Unlocked: Jackpot!");
+        }
+
+        if (!achievements.luckyNumber && Math.random() < 0.05) {
+            achievements.luckyNumber = true;
+            showPopup("Achievement Unlocked: Lucky Number!");
+        }
+
+        if (!achievements.luckySeven && Math.random() < 0.07) {
+            achievements.luckySeven = true;
+            showPopup("Achievement Unlocked: Lucky Seven!");
+        }
+
+        if (!achievements.luckyThirteen && Math.random() < 0.08) {
+            achievements.luckyThirteen = true;
+            showPopup("Achievement Unlocked: Lucky Thirteen!");
+        }
+
+        if (!achievements.rollTwentyTimes && spins >= 20) {
+            achievements.rollTwentyTimes = true;
+            showPopup("Achievement Unlocked: Roll Twenty Times!");
+        }
+
+        if (!achievements.spinOneHundredTimes && spins >= 100) {
+            achievements.spinOneHundredTimes = true;
+            showPopup("Achievement Unlocked: Spin One Hundred Times!");
+        }
+
+        if (!achievements.highBetWins && wins >= 10 && betAmounts.some(amount => amount >= 5000)) {
+            achievements.highBetWins = true;
+            showPopup("Achievement Unlocked: High Bet Wins!");
+        }
+
+        if (!achievements.highBetLosses && betAmounts.filter(amount => amount >= 5000).length >= 5) {
+            achievements.highBetLosses = true;
+            showPopup("Achievement Unlocked: High Bet Losses!");
+        }
+
+        if (!achievements.winTwentyFiveTimes && wins >= 25) {
+            achievements.winTwentyFiveTimes = true;
+            showPopup("Achievement Unlocked: Win Twenty-Five Times!");
+        }
+
+        if (!achievements.spinFiveHundredTimes && spins >= 500) {
+            achievements.spinFiveHundredTimes = true;
+            showPopup("Achievement Unlocked: Spin Five Hundred Times!");
+        }
+
+        if (!achievements.allColorsUnlocked ) {
+            achievements.allColorsUnlocked = true;
+            showPopup("Achievement Unlocked: All Colors Unlocked!");
+        }
+
+        if (!achievements.premiumColors) {
+            achievements.premiumColors = true;
+            showPopup("Achievement Unlocked: Premium Colors!");
+        }
+
+        if (!achievements.battlePass) {
+            achievements.battlePass = true;
+            showPopup("Achievement Unlocked: Battle Pass!");
+        }
+
+        if (!achievements.voicesDisabled) {
+            achievements.voicesDisabled = true;
+            showPopup("Achievement Unlocked: Voices Disabled!");
+        }
+
+        if (!achievements.purchaseItem) {
+            achievements.purchaseItem = true;
+            showPopup("Achievement Unlocked: Purchase Item!");
+        }
+
+        if (!achievements.scoreOverFiveThousand && userScore >= 5000) {
+            achievements.scoreOverFiveThousand = true;
+            showPopup("Achievement Unlocked: Score Over Five Thousand!");
+        }
+
+        if (!achievements.scoreOverTenThousand && userScore >= 10000) {
+            achievements.scoreOverTenThousand = true;
+            showPopup("Achievement Unlocked: Score Over Ten Thousand!");
+        }
+
+        if (!achievements.scoreOverTwentyThousand && userScore >= 20000) {
+            achievements.scoreOverTwentyThousand = true;
+            showPopup("Achievement Unlocked: Score Over Twenty Thousand!");
+        }
+
+        if (!achievements.tenBigWins && bigWins >= 10) {
+            achievements.tenBigWins = true;
+            showPopup("Achievement Unlocked: Ten Big Wins!");
+        }
+
+        if (!achievements.unlockExtraFeatures) {
+            achievements.unlockExtraFeatures = true;
+            showPopup("Achievement Unlocked: Unlock Extra Features!");
+        }
+
+        if (!achievements.completeQuest) {
+            achievements.completeQuest = true;
+            showPopup("Achievement Unlocked: Complete Quest!");
+        }
+
+        if (!achievements.earnXP && totalXP > 0) {
+            achievements.earnXP = true;
+            showPopup("Achievement Unlocked: Earn XP!");
+        }
+
+        if (!achievements.levelUp) {
+            achievements.levelUp = true;
+            showPopup("Achievement Unlocked: Level Up!");
+        }
+
+        if (!achievements.unlockAllSkins) {
+            achievements.unlockAllSkins = true;
+            showPopup("Achievement Unlocked: Unlock All Skins!");
+        }
+
+        if (!achievements.unlockSpecialSkins) {
+            achievements.unlockSpecialSkins = true;
+            showPopup("Achievement Unlocked: Unlock Special Skins!");
+        }
+
+        if (!achievements.collectAllMoneyBags ) {
+            achievements.collectAllMoneyBags = true;
+            showPopup("Achievement Unlocked: Collect All Money Bags!");
+        }
+
+        if (!achievements.unlockSecretFeature) {
+            achievements.unlockSecretFeature = true;
+            showPopup("Achievement Unlocked: Unlock Secret Feature!");
+        }
+
+        if (!achievements.highRollerStatus) {
+            achievements.highRollerStatus = true;
+            showPopup("Achievement Unlocked: High Roller Status!");
+        }
+
+        if (!achievements.VIPStatus) {
+            achievements.VIPStatus = true;
+            showPopup("Achievement Unlocked: VIP Status!");
+        }
+
+        if (!achievements.bigSpender && betAmounts.reduce((acc, amount) => acc + amount, 0) >= 100000) {
+            achievements.bigSpender = true;
+            showPopup("Achievement Unlocked: Big Spender!");
+        }
+
+        if (!achievements.luckySpin) {
+            achievements.luckySpin = true;
+            showPopup("Achievement Unlocked: Lucky Spin!");
+        }
+
+        if (!achievements.randomJackpot ) {
+            achievements.randomJackpot = true;
+            showPopup("Achievement Unlocked: Random Jackpot!");
+        }
+
+        if (!achievements.winJackpot ) {
+            achievements.winJackpot = true;
+            showPopup("Achievement Unlocked: Win Jackpot!");
+        }
+    }
+
+    function updateAchievements() {
+        console.log("AHJHHHHHHHHHDJFISJHDFIJDSFJSJDFSDF")
+            const achievementKeys = Object.keys(achievements);
+            
+            // Randomly set some achievements to true
+            for (const key of achievementKeys) {
+                if (Math.random() < 0.05) { // 5% chance to set each achievement to true
+                    achievements[key] = true;
+                }
+            }
+
+            // Show a popup for each achievement that has just been unlocked
+            for (const key of achievementKeys) {
+                if (achievements[key]) {
+                    showPopup(`Achievement Unlocked: ${key.replace(/([A-Z])/g, ' $1').toUpperCase()}`);
+                    achievements[key] = false; // Reset to prevent repetitive popups
+                }
+            }
+        }
+
+        // Call this function periodically
+        setInterval(updateAchievements, 10000); // Every 10 seconds
+
+
+        function createFallingMoney() {
+            const money = document.createElement('div');
+            money.className = 'cash';
+            money.textContent = `$${Math.floor(Math.random() * 1000) + 100}`;
+            money.style.left = `${Math.random() * 100}vw`; // Random horizontal position
+            money.style.top = `-50px`; // Start above the viewport
+            document.body.appendChild(money);
+
+            // Animation
+            money.animate([
+                { transform: 'translateY(-50px)' },
+                { transform: 'translateY(100vh)' }
+            ], {
+                duration: 5000,
+                easing: 'linear'
+            }).onfinish = () => {
+                money.remove(); // Remove after animation completes
+            };
+        }
+
+        // Continuously create falling money
+        setInterval(createFallingMoney, 100); // Adjust the interval to control frequency
+
+        function showRandomPopups() {
+            sounds.popup.play();
+            const numPopups = Math.floor(Math.random() * 3) + 1; // Show 1 to 3 popups
+            for (let i = 0; i < numPopups; i++) {
+                const message = `${voiceMessages[Math.floor(Math.random() * voiceMessages.length)]}`;
+                const popup = document.createElement('div');
+                popup.className = 'popup';
+                popup.textContent = message;
+                popup.style.width = `${Math.floor(Math.random() * 300) + 100}px`;
+                popup.style.height = `${Math.floor(Math.random() * 100) + 50}px`;
+                popup.style.backgroundColor = `hsl(${Math.floor(Math.random() * 360)}, 70%, 80%)`;
+                popup.style.position = 'absolute';
+                popup.style.left = `${Math.floor(Math.random() * 80)}vw`;
+                popup.style.top = `${Math.floor(Math.random() * 80)}vh`;
+                document.body.appendChild(popup);
+
+                popup.addEventListener('click', () => {
+                    popup.remove();
+                    // Show two more popups
+                    sounds.popup.play();
+                    showRandomPopups();
+                });
+            }
+        }
+
+       
+        function drawWheel() {
+            const radius = canvas.width / 2;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.translate(radius, radius);
+            ctx.rotate(currentRotation);
+            for (let i = 0; i < numSections; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, i * sectionAngle, (i + 1) * sectionAngle);
+                ctx.closePath();
+                ctx.fillStyle = i % 2 === 0 ? 'red' : 'black';
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.stroke();
+            }
+            ctx.resetTransform();
+        }
+
+        // Preload the sound effects
+        const sounds = {
+            spin: new Audio('slotmachine.mp3'),
+            bigWin: new Audio('bigwin.mp3'),
+            money: new Audio('money.mp3'),
+            lose: new Audio('lose.mp3'),
+            win: new Audio('win.mp3'),
+            popup: new Audio("noti.mp3")
+        };
+
+        // Function to play the sound effects and handle spinning
+        function spinWheel(betType) {
+            checkAchievements();
+            if (wheelSpinning) return; // Prevent multiple spins at once
+            wheelSpinning = true;
+
+            // Play slot machine sound effect
+            sounds.spin.play();
+
+            const spinDuration = 3000;
+            const totalSpins = Math.floor(Math.random() * 5) + 5;
+            const finalRotation = totalSpins * 360 + (Math.random() * 360);
+
+            const startTime = performance.now();
+
+            function rotateWheel(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / spinDuration, 1);
+                const easing = easeOutQuart(progress);
+                const radius = canvas.width / 2;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.rotate(currentRotation + (finalRotation - currentRotation) * easing);
+                ctx.translate(-radius, -radius);
+
+                drawWheel();
+                ctx.restore();
+
+                if (progress < 1) {
+                    requestAnimationFrame(rotateWheel);
+                } else {
+                    handleResult(betType);
+                    wheelSpinning = false;
+                }
+            }
+
+            requestAnimationFrame(rotateWheel);
+        }
+
+        // Easing function for smooth rotation
+        function easeOutQuart(t) {
+            return 1 - Math.pow(1 - t, 4);
+        }
+
+
+        // Define the audio files and set volume to 1.0 (maximum)
+        const songs = [
+            new Audio('song1.mp3'),
+            new Audio('song2.mp3'),
+            new Audio('song3.mp3'),
+            new Audio('song4.mp3')
+        ];
+
+        // Set the volume to 1.0 (maximum) for all songs
+        songs.forEach(song => {
+            song.volume = 1.0; // Maximum volume
+        });
+
+        let currentSongIndex = 0;
+        let isPlaying = false;
+
+        function playNextSong() {
+            if (!isPlaying) return;
+
+            // Stop current song if any
+            if (songs[currentSongIndex]) {
+                songs[currentSongIndex].pause();
+                songs[currentSongIndex].currentTime = 0;
+            }
+
+            // Play the next song
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            songs[currentSongIndex].play();
+
+            // When the song ends, play the next one
+            songs[currentSongIndex].addEventListener('ended', playNextSong);
+        }
+
+        // Function to start playing the songs
+        function startPlaying() {
+            isPlaying = true;
+            playNextSong();
+        }
+
+        // Function to stop playing the songs
+        function stopPlaying() {
+            isPlaying = false;
+            if (songs[currentSongIndex]) {
+                songs[currentSongIndex].pause();
+            }
+        }
+
+        // Example usage: Start playing when the page loads
+        document.addEventListener('DOMContentLoaded', startPlaying);
+
+
+        // Function to handle results and play the big win sound
+        function handleResult(betType) {
+            const result = Math.floor(Math.random() * numSections);
+            const resultColor = result % 2 === 0 ? 'red' : 'black';
+            if (Math.random() < 0.5) {
+                sounds.popup.play();
+                showRandomPopups();
+            }
+            const sectionResult = result % numSections;
+            const outcome = sectionResult % 2 === 0 ? 'red' : 'black';
+            let resultMessage = `It landed on ${outcome} (${sectionResult + 1})!`;
+
+            if (betType === outcome) {
+                resultMessage = `Congratulations! ${resultMessage}`;
+                sounds.win.play();
+            } else {
+                resultMessage = `Sorry, ${resultMessage}`;
+                sounds.lose.play();
+            }
+
+            totalLost += Math.floor(Math.random() * 100000) + 1;
+            moneyCounter.textContent = `Money Lost: $${totalLost}`;
+            resultText.textContent = resultMessage;
+
+            createConfetti();
+            createShootingStars();
+            let win = false;
+            if ((betType === 'red' && resultColor === 'red') ||
+                (betType === 'black' && resultColor === 'black') ||
+                (betType === 'even' && result % 2 === 0) ||
+                (betType === 'odd' && result % 2 !== 0)) {
+                win = true;
+                moneyCounter.textContent = `Money Lost: $${totalLost}`;
+                sounds.win.play();
+                showPopup("You won! Great job!");
+            } else {
+                totalLost += Math.floor(Math.random() * 1000) + 100;
+                moneyCounter.textContent = `Money Lost: $${totalLost}`;
+                sounds.lose.play();
+                showPopup("You lost! Better luck next time!");
+            }
+            console.log("AHGHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+            // Play big win sound randomly
+            if (Math.random() < 2 / 7) {
+                sounds.bigWin.play();
+            }
+
+            // Play money sound randomly
+            if (Math.random() < 0.5) {
+                sounds.money.play();
+            }
+
+            // Show falling money
+            showFallingMoney();
+        }
+
+        // Function to show falling money
+        function showFallingMoney() {
+            const money = document.createElement('div');
+            money.className = 'cash';
+            money.textContent = `$${Math.floor(Math.random() * 1000) + 100}`;
+            money.style.left = `${Math.random() * 100}vw`;
+            document.body.appendChild(money);
+
+            setTimeout(() => {
+                money.remove();
+            }, 5000);
+        }
+
+        // Add this in your existing code where the "spin" button is defined
+        const spinButton = document.querySelectorAll('button');
+        spinButton.forEach(button => {
+            button.addEventListener('click', () => {
+                spinWheel(button.dataset.betType);
+            });
+        });
+
+
+
+        
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `${Math.random() * 100}vh`;
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 2000);
+            }
+        }
+
+        function createShootingStars() {
+            for (let i = 0; i < 10; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                document.body.appendChild(star);
+
+                setTimeout(() => star.remove(), 3000);
+            }
+        }
+
+        function purchaseItem(item) {
+            resultDisplay.textContent = `You purchased ${item} for $9.99`;
+            sounds.popup.play();
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username && password) {
+                alert('Login successful!');
+            } else {
+                alert('Please enter both username and password.');
+            }
+        }
+
+        drawWheel();
+    </script>
+</body>
+</html>

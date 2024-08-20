@@ -489,11 +489,10 @@
 </head>
 <body>
     <!-- midroll ads -->
-    <video autoplay style="z-index: 1000; top: 0; position: fixed; margin: auto; left: 20%;
+    <video autoplay controls style="z-index: 1000; top: 0; position: fixed; margin: auto; left: 20%;
     top: 20%; "
     id="video-ad"
     class="video-js"
-    controls
     preload="auto"
     >
     <source src="ad.mp4" type="video/mp4" />
@@ -1388,8 +1387,10 @@
             vsrc.src = "ad.mp4"
             vsrc.type = "video/mp4"
             add.id = 'video-ad';
-            add.classList = "video.js"
+            add.classList = "video-js"
             add.preload = "auto"
+            add.setAttribute("controls", "")
+            add.setAttribute("autoplay", "")
             add.appendChild(vsrc)
             add.style.top = t;
             add.style.left = l;

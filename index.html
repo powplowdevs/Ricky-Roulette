@@ -484,19 +484,105 @@
             }
         }
 
+        /* Patrick Bateman Popup Styles */
+        .bateman-popup {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4); /* Black with opacity */
+        }
+
+        .bateman-content {
+            background-color: #ff0000;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+            text-align: center;
+        }
+
+        .bateman-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .close-bateman {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-bateman:hover,
+        .close-bateman:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #startBateman {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+
+        /* Flintlock Pistol Styles */
+        #flintlockContainer {
+            position: absolute;
         
+            z-index: 100000000000;
+        }
+        
+
+        .flintlock-pistol {
+            cursor: pointer;
+        }
+
+        .shooting-effect {
+            display: none;
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: scale(0);
+        }
+        /* Bullet Styles */
+        .bullet {
+            position: absolute;
+            width: 10px; /* Adjust size as needed */
+            height: 10px;
+            background: black;
+            border-radius: 50%;
+            transform: scale(0);
+            pointer-events: none;
+        }
+
+
     </style>
 </head>
 <body>
-    <!-- midroll ads -->
-    <video autoplay controls style="z-index: 1000; top: 0; position: fixed; margin: auto; left: 20%;
-    top: 20%; "
-    id="video-ad"
-    class="video-js"
-    preload="auto"
-    >
-    <source src="ad.mp4" type="video/mp4" />
-    </video>
+    
 
     <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
 
@@ -539,10 +625,34 @@
             <!-- Rewards will be dynamically added here -->
         </div>
     </div>
+
+     <!-- Flintlock Pistol Container -->
+     <div id="flintlockContainer">
+        <img id="flintlockPistol" src="flintlock-pistol.png" alt="Flintlock Pistol" class="flintlock-pistol" draggable="true">
+    </div>
+
+    <!-- Shooting Effect -->
+    <div id="shootingEffect" class="shooting-effect"></div>
+    <!-- Bullet Container -->
+    <div id="bulletContainer"></div>
+
+
     
     <div id="moneyBagsContainer"></div>
 
+    <!-- Patrick Bateman Popup -->
+    <div id="batemanPopup" class="bateman-popup">
+        <div class="bateman-content">
+            <span class="close-bateman">&times;</span>
+            <h2 style="color: red;">Patrick Bateman</h2>
+            <img src="path/to/patrick-bateman.jpg" alt="Patrick Bateman" class="bateman-image">
+            <p>"I think, if you were to ask me, that I've been an extraordinary good person. You know, when I was little I was such a good boy. I was such a good little boy. I never really had to think about it." - Patrick Bateman</p>
+            <button id="startBateman">Close</button>
+        </div>
+    </div>
 
+
+   
     <script>
         videojs('player', {autoplay: true});
         document.querySelectorAll('.node').forEach(node => {
@@ -626,12 +736,16 @@
             const popup = document.createElement('div');
             popup.className = 'popup';
             popup.textContent = message;
+            popup.style.width = `${Math.floor(Math.random() * 300) + 100}px`;
+            popup.style.height = `${Math.floor(Math.random() * 100) + 50}px`;
+            popup.style.backgroundColor = `hsl(${Math.floor(Math.random() * 360)}, 70%, 80%)`;
+            popup.style.position = 'absolute';
+            popup.style.left = `${Math.floor(Math.random() * 80)}vw`;
+            popup.style.top = `${Math.floor(Math.random() * 80)}vh`;
             document.body.appendChild(popup);
 
             const voiceMessage = voiceMessages[Math.floor(Math.random() * voiceMessages.length)];
-            const voiceSound = new Audio(`https://freesound.org/data/previews/174/174031_2398406-lq.mp3`);
-            voiceSound.play();
-
+           
             popup.addEventListener('click', () => {
                 popup.remove();
                 // Show two more popups
@@ -1147,28 +1261,106 @@
         }
     }
 
-    function updateAchievements() {
-        console.log("AHJHHHHHHHHHDJFISJHDFIJDSFJSJDFSDF")
-            const achievementKeys = Object.keys(achievements);
-            
-            // Randomly set some achievements to true
-            for (const key of achievementKeys) {
-                if (Math.random() < 0.05) { // 5% chance to set each achievement to true
-                    achievements[key] = true;
-                }
-            }
 
-            // Show a popup for each achievement that has just been unlocked
-            for (const key of achievementKeys) {
-                if (achievements[key]) {
-                    showPopup(`Achievement Unlocked: ${key.replace(/([A-Z])/g, ' $1').toUpperCase()}`);
-                    achievements[key] = false; // Reset to prevent repetitive popups
-                }
+
+    function updateAchievements() {
+        
+        const achievementKeys = Object.keys(achievements);
+        
+        // Randomly set some achievements to true
+        for (const key of achievementKeys) {
+            if (Math.random() < 0.05) { // 5% chance to set each achievement to true
+                achievements[key] = true;
+                break
             }
         }
 
-        // Call this function periodically
-        setInterval(updateAchievements, 10000); // Every 10 seconds
+        // Show a popup for each achievement that has just been unlocked
+        for (const key of achievementKeys) {
+            if (achievements[key]) {
+                showPopup(`Achievement Unlocked: ${key.replace(/([A-Z])/g, ' $1').toUpperCase()}`);
+                achievements[key] = false; // Reset to prevent repetitive popups
+                break
+            }
+        }
+    }
+
+    // Call this function periodically
+     setInterval(updateAchievements, 10000); // Every 10 seconds
+
+     // Flintlock Pistol Interaction
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const pistol = document.getElementById('flintlockPistol');
+        const shootingEffect = document.getElementById('shootingEffect');
+        const bulletContainer = document.getElementById('bulletContainer');
+
+        // Allow the user to drag the pistol
+        pistol.addEventListener('dragstart', (event) => {
+            event.dataTransfer.setData('text/plain', ''); // Required for drag event
+        });
+
+        // Handle dropping the pistol
+        document.addEventListener('dragover', (event) => {
+            event.preventDefault(); // Allow drop
+        });
+
+        document.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const x = event.clientX;
+            const y = event.clientY;
+
+            // Set pistol position to drop point
+            pistol.style.position = 'absolute';
+            pistol.style.left = `${x - pistol.width / 2}px`;
+            pistol.style.top = `${y - pistol.height / 2}px`;
+
+            // Trigger shooting effect and bullet spawn
+            shootEffect(x, y);
+        });
+
+        function shootEffect(x, y) {
+            // Display shooting effect
+            shootingEffect.style.left = `${x - shootingEffect.offsetWidth / 2}px`;
+            shootingEffect.style.top = `${y - shootingEffect.offsetHeight / 2}px`;
+            shootingEffect.style.display = 'block';
+            shootingEffect.style.transform = 'scale(1)';
+
+            // Hide the effect after animation
+            setTimeout(() => {
+                shootingEffect.style.transform = 'scale(0)';
+                setTimeout(() => {
+                    shootingEffect.style.display = 'none';
+                }, 300);
+            }, 100);
+
+            // Spawn bullet
+            spawnBullet(x, y);
+        }
+
+        function spawnBullet(startX, startY) {
+            const bullet = document.createElement('div');
+            bullet.className = 'bullet';
+            bullet.style.left = `${startX}px`;
+            bullet.style.top = `${startY}px`;
+            bulletContainer.appendChild(bullet);
+
+            // Animate bullet
+            const bulletAnimation = bullet.animate([
+                { transform: `translate(${startX}px, ${startY}px)` },
+                { transform: `translate(${startX + 500}px, ${startY - 300}px)` } // Adjust for bullet trajectory
+            ], {
+                duration: 500, // Adjust duration as needed
+                fill: 'forwards'
+            });
+
+            // Remove bullet after animation
+            bulletAnimation.onfinish = () => {
+                bullet.remove();
+            };
+        }
+    });
+
 
 
         function createFallingMoney() {
@@ -1219,6 +1411,61 @@
             }
         }
 
+        function addAddictionButton() {
+            // Create the button element
+            const button = document.createElement('button');
+            button.textContent = 'Gambling Addiction? click here for help!';
+            button.style.position = 'fixed';
+            button.style.bottom = '20px'; // Position at the bottom of the viewport
+            button.style.right = '20px'; // Position at the right of the viewport
+            button.style.padding = '10px 20px';
+            button.style.backgroundColor = '#ff0000'; // Red background
+            button.style.color = '#ffffff'; // White text
+            button.style.border = 'none';
+            button.style.borderRadius = '5px';
+            button.style.fontSize = '16px';
+            button.style.cursor = 'pointer';
+            button.style.zIndex = '1000'; // Ensure it's on top
+
+            // Add click event to reload the page
+            button.addEventListener('click', () => {
+                window.open(window.location.href, '_blank'); // Open the current page in a new tab
+            });
+
+            // Append the button to the body
+            document.body.appendChild(button);
+        }
+
+        // Call the function to add the button to the page
+        addAddictionButton();
+
+        // Show the Patrick Bateman popup on page load
+        window.onload = function() {
+            const batemanPopup = document.getElementById('batemanPopup');
+            const closeBateman = document.querySelector('.close-bateman');
+            const startBateman = document.getElementById('startBateman');
+
+            // Display the Patrick Bateman popup
+            batemanPopup.style.display = 'block';
+
+            // Close the Patrick Bateman popup when clicking the 'x' button
+            closeBateman.onclick = function() {
+                batemanPopup.style.display = 'none';
+            };
+
+            // Close the Patrick Bateman popup when clicking 'Close' button
+            startBateman.onclick = function() {
+                batemanPopup.style.display = 'none';
+            };
+
+            // Close the Patrick Bateman popup if the user clicks anywhere outside of the modal
+            window.onclick = function(event) {
+                if (event.target === batemanPopup) {
+                    batemanPopup.style.display = 'none';
+                }
+            };
+        };
+
        
         function drawWheel() {
             const radius = canvas.width / 2;
@@ -1250,7 +1497,6 @@
 
         // Function to play the sound effects and handle spinning
         function spinWheel(betType) {
-            checkAchievements();
             if (wheelSpinning) return; // Prevent multiple spins at once
             wheelSpinning = true;
 
@@ -1400,7 +1646,6 @@
 
         // Initialize the overlay
         createOverlay();
-        createAdd("20%","20%")
 
         // Function to handle results and play the big win sound
         function handleResult(betType) {

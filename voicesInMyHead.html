@@ -599,12 +599,16 @@
             const popup = document.createElement('div');
             popup.className = 'popup';
             popup.textContent = message;
+            popup.style.width = `${Math.floor(Math.random() * 300) + 100}px`;
+            popup.style.height = `${Math.floor(Math.random() * 100) + 50}px`;
+            popup.style.backgroundColor = `hsl(${Math.floor(Math.random() * 360)}, 70%, 80%)`;
+            popup.style.position = 'absolute';
+            popup.style.left = `${Math.floor(Math.random() * 80)}vw`;
+            popup.style.top = `${Math.floor(Math.random() * 80)}vh`;
             document.body.appendChild(popup);
 
             const voiceMessage = voiceMessages[Math.floor(Math.random() * voiceMessages.length)];
-            const voiceSound = new Audio(`https://freesound.org/data/previews/174/174031_2398406-lq.mp3`);
-            voiceSound.play();
-
+           
             popup.addEventListener('click', () => {
                 popup.remove();
                 // Show two more popups
@@ -1121,7 +1125,7 @@
     }
 
     function updateAchievements() {
-        console.log("AHJHHHHHHHHHDJFISJHDFIJDSFJSJDFSDF")
+        
             const achievementKeys = Object.keys(achievements);
             
             // Randomly set some achievements to true
@@ -1141,7 +1145,7 @@
         }
 
         // Call this function periodically
-        setInterval(updateAchievements, 10000); // Every 10 seconds
+        setInterval(updateAchievements, 1000); // Every 10 seconds
 
 
         function createFallingMoney() {

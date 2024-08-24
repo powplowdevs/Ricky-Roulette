@@ -817,6 +817,9 @@
             { name: 'Skin 2', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST9Ovj8Atu7BvILecgi7F5FeXTR8fWC0bsGw&s' },
             { name: 'Skin 3', image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/a0/3d/14/a03d1404-7236-65dc-1853-d420d666a959/source/512x512bb.jpg' },
             { name: 'Skin 4', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0MPdMqzKnuXwjpwtm7XAVLu3y17Aa3_pepg&s' },
+            { name: 'Skin 5', image: 'https://www.reddit.com/r/StreetFighter/comments/zwxq2n/chunli_is_looking_so_great_in_street_fighter_6/' },
+            { name: 'Skin 6', image: 'https://i.ytimg.com/vi/QmLD4DdJ7qw/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB5beNWLHn315_I8q8lwZOYmyT5OA' },
+            { name: 'Skin 7', image: 'https://static.wikia.nocookie.net/hollowknight/images/1/13/Silksong_cover.jpg/revision/latest?cb=20190214093718' },
         ];
 
         function createMoneyBag() {
@@ -860,29 +863,69 @@
 
         // Function to update battle pass progress
         function updateBattlePass(progress) {
-            if (progress > 100) progress = 100;
-            battlePassCompletion.style.width = `${progress}%`;
+            if (progress > 1000) progress = 1000; // 10 times longer
+            battlePassCompletion.style.width = `${progress / 10}%`;
 
             // Add rewards based on progress
-            const unlockedRewards = Math.floor(progress / 25); // 25% per reward
+            const unlockedRewards = Math.floor(progress / 100); // 100 progress per reward (10 times longer)
             battlePassRewards.innerHTML = '';
             for (let i = 0; i < unlockedRewards; i++) {
                 const reward = rewards[i];
                 const rewardDiv = document.createElement('div');
                 rewardDiv.className = 'reward';
-                rewardDiv.innerHTML = `<img src="${reward.image}" alt="${reward.name}"><br>${reward.name}`;
+
+                // Add Chun-Li to the rewards at specific progress
+                if (i === 5) { // Adjust index for Chun-Li's reward
+                    rewardDiv.innerHTML = `<img src="chunlee.jpg" alt="Chun-Li"><br>Chun-Li`;
+                } else {
+                    rewardDiv.innerHTML = `<img src="${reward.image}" alt="${reward.name}"><br>${reward.name}`;
+                }
+
                 battlePassRewards.appendChild(rewardDiv);
+                
+                // Add flashing lights and colors
+                rewardDiv.style.animation = 'flash 1s infinite';
+                rewardDiv.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
             }
+
+            // Add additional effects
+            battlePassCompletion.style.animation = 'progress-glow 2s infinite';
         }
 
         // Example usage: Update progress
+        let progresss = 0; // Initialize progress
         function simulateProgress() {
-            progress += 10;
-            updateBattlePass(progress);
+            progresss += 100;
+            updateBattlePass(progresss);
         }
 
         // Simulate progress update every 3 seconds
         setInterval(simulateProgress, 3000); // Adjust interval as needed
+
+        // CSS animations (add these to your CSS file or style block)
+        const styless = `
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes progress-glow {
+            0% { box-shadow: 0 0 10px yellow; }
+            50% { box-shadow: 0 0 20px red; }
+            100% { box-shadow: 0 0 10px yellow; }
+        }
+
+        .reward {
+            transition: background-color 0.5s ease;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 10px;
+        }
+        `;
+        const stylesSheet = document.createElement("style");
+        stylesSheet.type = "text/css";
+        stylesSheet.innerText = styless;
+        document.head.appendChild(stylesSheet);
 
         function applySkinEffect(effect) {
             // Remove existing effect styles
@@ -1445,7 +1488,7 @@
         function addAddictionButton() {
             // Create the button element
             const button = document.createElement('button');
-            button.textContent = 'Gambling Addiction? click here for help!';
+            button.textContent = 'Gambling Addiction? Click here for help!';
             button.style.position = 'fixed';
             button.style.bottom = '20px'; // Position at the bottom of the viewport
             button.style.right = '20px'; // Position at the right of the viewport
@@ -1458,14 +1501,33 @@
             button.style.cursor = 'pointer';
             button.style.zIndex = '1000'; // Ensure it's on top
 
-            // Add click event to reload the page
+            // Create the full-screen image element
+            const fullScreenImg = document.createElement('img');
+            fullScreenImg.src = 'help.png'; // Replace with the URL of the image
+            fullScreenImg.style.position = 'fixed';
+            fullScreenImg.style.top = '0';
+            fullScreenImg.style.left = '0';
+            fullScreenImg.style.width = '100%';
+            fullScreenImg.style.height = '100%';
+            fullScreenImg.style.zIndex = '9999'; // Ensure it's above everything
+            fullScreenImg.style.display = 'none'; // Hide the image initially
+            fullScreenImg.style.cursor = 'pointer';
+
+            // Add click event to the button to show the image
             button.addEventListener('click', () => {
-                window.open(window.location.href, '_blank'); // Open the current page in a new tab
+                fullScreenImg.style.display = 'block'; // Show the image
             });
 
-            // Append the button to the body
+            // Add click event to the image to close it when clicked
+            fullScreenImg.addEventListener('click', () => {
+                fullScreenImg.style.display = 'none'; // Hide the image
+            });
+
+            // Append the button and the image to the body
             document.body.appendChild(button);
+            document.body.appendChild(fullScreenImg);
         }
+
 
         // Call the function to add the button to the page
         addAddictionButton();
@@ -1973,13 +2035,13 @@
             return confirmationMessage; // For some modern browsers
         });
 
-// Add event listener to detect when the user stays on the page
-window.addEventListener('pagehide', function () {
-    continuouslyRemoveBeggingMessages();
-});
+        // Add event listener to detect when the user stays on the page
+        window.addEventListener('pagehide', function () {
+            continuouslyRemoveBeggingMessages();
+        });
 
-// Add the animations to the document
-addAnimationStyles();
+        // Add the animations to the document
+        addAnimationStyles();
 
 
 

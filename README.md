@@ -60,12 +60,14 @@ Why in the hell would you want your name on this? (hmu tho if u trynna add somet
 4. The Armenian Genocide
 5. Ryan "Gootecks" Gutierrez
 6. Many poor souls who have been forced to "play test"
+8. Jack
+7. Dani
 
 ## Requested features
 1. Chun lee added to battle pass
-2. Flint lock pistol added to battle pass
-3. More voices 
-4. patrick bateman (no more context just add that)
+2. More voices
+3. Add freakbob
+
 
 
 

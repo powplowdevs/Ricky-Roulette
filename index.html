@@ -576,7 +576,7 @@
         }
 
         
-        #crazyButton {
+       #crazyButton {
             position: fixed;
             bottom: 10px;
             left: 10px;
@@ -589,6 +589,16 @@
             transition: transform 0.5s ease, background-color 0.5s ease;
         }
 
+        @keyframes crazySpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { background-color: red; }
+            50% { background-color: yellow; }
+            100% { background-color: red; }
+        }
         @keyframes crazySpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -1362,6 +1372,33 @@
     // Call this function periodically
      setInterval(updateAchievements, 10000); // Every 10 seconds
 
+
+     document.getElementById('crazyButton').addEventListener('click', function() {
+            const button = this;
+
+            // Apply a spinning animation
+            button.style.animation = 'crazySpin 2s linear infinite';
+
+            // Change the button color every second
+            button.style.animation = 'pulse 1s infinite';
+
+            // Make the button bounce up and down
+            button.style.transition = 'transform 1s ease-in-out';
+            button.style.transform = 'translateY(-30px)';
+            setTimeout(function() {
+                button.style.transform = 'translateY(0px)';
+            }, 1000);
+
+            // Display an alert as an additional action
+            alert('You clicked the crazy button! 🎉');
+
+            // Randomly move the button to a new position on the screen
+            setTimeout(function() {
+          
+            }, 2000);
+        });
+
+
      // Flintlock Pistol Interaction
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -1411,6 +1448,19 @@
             // Spawn bullet
             spawnBullet(x, y);
         }
+
+        document.getElementById('stopButton').addEventListener('mouseover', function() {
+            const button = this;
+            const buttonRect = button.getBoundingClientRect();
+            const maxX = window.innerWidth - buttonRect.width;
+            const maxY = window.innerHeight - buttonRect.height;
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            button.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        });
+
 
         function spawnBullet(startX, startY) {
             const bullet = document.createElement('div');

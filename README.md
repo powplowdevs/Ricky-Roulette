@@ -65,8 +65,7 @@ Why in the hell would you want your name on this? (hmu tho if u trynna add somet
 ## Requested features
 1. Chun lee added to battle pass
 2. More voices
-3. Add volume slider that only goes up 
-4. Add freakbob
+3. Add freakbob
 
 
 

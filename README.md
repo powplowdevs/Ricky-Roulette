@@ -60,6 +60,7 @@ Why in the hell would you want your name on this? (hmu tho if u trynna add somet
 4. The Armenian Genocide
 5. Ryan "Gootecks" Gutierrez
 6. Many poor souls who have been forced to "play test"
+8. Jack
 7. Dani
 
 ## Requested features

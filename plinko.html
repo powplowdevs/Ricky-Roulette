@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plinko Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        #plinko-container {
+            margin-top: 60px; /* Space for the navigation bar */
+            text-align: center;
+        }
+
+        #board {
+            position: relative;
+            width: 600px;
+            height: 800px;
+            margin: 0 auto;
+            background: #f5f5f5;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+
+        #drop-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #drop-button:hover {
+            background-color: #218838;
+        }
+
+        #score {
+            margin-top: 20px;
+            font-size: 20px;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="plinko.html">Plinko</a></li>
+        </ul>
+    </nav>
+
+    <div id="plinko-container">
+        <h1>Plinko Game</h1>
+        <div id="board"></div>
+        <button id="drop-button">Drop Disk</button>
+        <div id="score">Score: 0</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const board = document.getElementById('board');
+        const dropButton = document.getElementById('drop-button');
+        const scoreDisplay = document.getElementById('score');
+        let score = 0;
+
+        function createPlinkoBoard() {
+            const rows = 10;
+            const cols = 10;
+            const slotSize = 60;
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    if ((row + col) % 2 === 0) {
+                        const peg = document.createElement('div');
+                        peg.className = 'peg';
+                        peg.style.width = `${slotSize}px`;
+                        peg.style.height = `${slotSize}px`;
+                        peg.style.position = 'absolute';
+                        peg.style.left = `${col * slotSize}px`;
+                        peg.style.top = `${row * slotSize}px`;
+                        board.appendChild(peg);
+                    }
+                }
+            }
+        }
+
+        function dropDisk() {
+            const disk = document.createElement('div');
+            disk.className = 'disk';
+            board.appendChild(disk);
+
+            const diskSize = 30;
+            disk.style.width = `${diskSize}px`;
+            disk.style.height = `${diskSize}px`;
+            disk.style.borderRadius = '50%';
+            disk.style.background = 'red';
+            disk.style.position = 'absolute';
+            disk.style.left = `${Math.random() * (board.clientWidth - diskSize)}px`;
+            disk.style.top = '0px';
+
+            const fallDuration = 2000; // milliseconds
+
+            disk.animate([
+                { top: '0px' },
+                { top: `${board.clientHeight - diskSize}px` }
+            ], {
+                duration: fallDuration,
+                easing: 'ease-out'
+            }).onfinish = () => {
+                // Calculate score based on where the disk lands
+                const diskRect = disk.getBoundingClientRect();
+                const boardRect = board.getBoundingClientRect();
+                const landingPosition = Math.floor((diskRect.left - boardRect.left) / (board.clientWidth / 10));
+                const points = 100 - Math.abs(5 - landingPosition) * 10;
+                score += points;
+                scoreDisplay.textContent = `Score: ${score}`;
+                disk.remove();
+            };
+        }
+
+        createPlinkoBoard();
+
+        dropButton.addEventListener('click', dropDisk);
+    });
+    </script>
+</body>
+</html>

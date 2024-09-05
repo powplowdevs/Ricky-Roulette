@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plinko Game</title>
+    <title>Crazy Plinko Game</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #222;
+            color: #fff;
         }
-
         nav {
             background-color: #333;
             color: #fff;
@@ -21,38 +22,57 @@
             left: 0;
             z-index: 1000;
         }
-
         nav ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
         }
-
         nav ul li {
             display: inline;
             margin-right: 10px;
         }
-
         nav ul li a {
             color: #fff;
             text-decoration: none;
         }
-
         #plinko-container {
-            margin-top: 60px; /* Space for the navigation bar */
+            margin-top: 60px;
             text-align: center;
         }
-
         #board {
             position: relative;
             width: 600px;
             height: 800px;
             margin: 0 auto;
-            background: #f5f5f5;
+            background: #222;
             border: 2px solid #ccc;
             border-radius: 10px;
+            overflow: hidden;
         }
-
+        .peg {
+            width: 10px;
+            height: 10px;
+            background-color: #ff0;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .disk {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff0000, #800000);
+            position: absolute;
+        }
+        .slot {
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            background-color: #fff;
+            text-align: center;
+            line-height: 20px;
+            color: #000;
+            border-radius: 5px;
+        }
         #drop-button {
             margin-top: 20px;
             padding: 10px 20px;
@@ -63,15 +83,13 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
         #drop-button:hover {
             background-color: #218838;
         }
-
         #score {
             margin-top: 20px;
             font-size: 20px;
-}
+        }
     </style>
 </head>
 <body>
@@ -83,7 +101,7 @@
     </nav>
 
     <div id="plinko-container">
-        <h1>Plinko Game</h1>
+        <h1>Crazy Plinko Game</h1>
         <div id="board"></div>
         <button id="drop-button">Drop Disk</button>
         <div id="score">Score: 0</div>
@@ -91,70 +109,203 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        const board = document.getElementById('board');
-        const dropButton = document.getElementById('drop-button');
-        const scoreDisplay = document.getElementById('score');
-        let score = 0;
+            const board = document.getElementById('board');
+            const dropButton = document.getElementById('drop-button');
+            const scoreDisplay = document.getElementById('score');
+            let score = 1;
 
-        function createPlinkoBoard() {
-            const rows = 10;
-            const cols = 10;
-            const slotSize = 60;
+            // Constants
+            const gravity = 0.2;
+            const bounceFactor = 0.7; // Elasticity
+            const numberOfSlots = 10;
+            const maxScoreMultiplier = 100;
 
-            for (let row = 0; row < rows; row++) {
-                for (let col = 0; col < cols; col++) {
-                    if ((row + col) % 2 === 0) {
-                        const peg = document.createElement('div');
-                        peg.className = 'peg';
-                        peg.style.width = `${slotSize}px`;
-                        peg.style.height = `${slotSize}px`;
-                        peg.style.position = 'absolute';
-                        peg.style.left = `${col * slotSize}px`;
-                        peg.style.top = `${row * slotSize}px`;
-                        board.appendChild(peg);
+            class Disk {
+                constructor(x, y, radius, color) {
+                    this.position = { x: x, y: y };
+                    this.velocity = { x: (Math.random() - 0.5) * 2, y: 0 };
+                    this.radius = radius;
+                    this.color = color;
+                }
+
+                update() {
+                    this.velocity.y += gravity;
+                    this.position.x += this.velocity.x;
+                    this.position.y += this.velocity.y;
+
+                    this.checkBoardBounds();
+                    this.checkWalls();
+                    this.checkTriangleBounds();
+                }
+
+                checkBoardBounds() {
+                    if (this.position.x < this.radius) {
+                        this.position.x = this.radius;
+                        this.velocity.x *= -bounceFactor;
+                    }
+                    if (this.position.x > board.clientWidth - this.radius) {
+                        this.position.x = board.clientWidth - this.radius;
+                        this.velocity.x *= -bounceFactor;
+                    }
+                    if (this.position.y > board.clientHeight - this.radius) {
+                        this.position.y = board.clientHeight - this.radius;
+                        this.velocity.y *= -bounceFactor;
                     }
                 }
+
+                checkWalls() {
+                    for (let wall of walls) {
+                        const dx = this.position.x - wall.position.x;
+                        const dy = this.position.y - wall.position.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < this.radius + wall.radius) {
+                            // Reflect disk's velocity off the wall
+                            const angle = Math.atan2(dy, dx);
+                            const speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+                            const velocityAngle = Math.atan2(this.velocity.y, this.velocity.x);
+
+                            this.velocity.x = -speed * Math.cos(angle - velocityAngle);
+                            this.velocity.y = -speed * Math.sin(angle - velocityAngle);
+
+                            // Position disk outside the wall
+                            const overlap = this.radius + wall.radius - distance;
+                            this.position.x += overlap * (dx / distance);
+                            this.position.y += overlap * (dy / distance);
+                        }
+                    }
+                }
+
+                checkTriangleBounds() {
+                    const x1 = board.clientWidth / 2;
+                    const y1 = 0;
+                    const x2 = 0;
+                    const y2 = board.clientHeight;
+                    const x3 = board.clientWidth;
+                    const y3 = board.clientHeight;
+
+                    function isInsideTriangle(px, py, ax, ay, bx, by, cx, cy) {
+                        const area = 0.5 * (-by * cx + ay * (-bx + cx) + ax * (by - cy) + bx * cy);
+                        const sign = area < 0 ? -1 : 1;
+                        const s = (ay * cx - ax * cy + (cy - ay) * px + (ax - cx) * py) * sign;
+                        const t = (ax * by - ay * bx + (ay - by) * px + (bx - ax) * py) * sign;
+
+                        return s >= 0 && t >= 0 && (s + t) <= area * 2;
+                    }
+
+                    if (!isInsideTriangle(this.position.x, this.position.y, x1, y1, x2, y2, x3, y3)) {
+                        if (this.position.x < 0) {
+                            this.position.x = 0;
+                            this.velocity.x *= -bounceFactor;
+                        }
+                        if (this.position.x > board.clientWidth) {
+                            this.position.x = board.clientWidth;
+                            this.velocity.x *= -bounceFactor;
+                        }
+                        if (this.position.y < 0) {
+                            this.position.y = 0;
+                            this.velocity.y *= -bounceFactor;
+                        }
+                        if (this.position.y > board.clientHeight) {
+                            this.position.y = board.clientHeight;
+                            this.velocity.y *= -bounceFactor;
+                        }
+                    }
+                }
+
+                render() {
+                    const diskElement = document.createElement('div');
+                    diskElement.className = 'disk';
+                    diskElement.style.width = `${this.radius * 2}px`;
+                    diskElement.style.height = `${this.radius * 2}px`;
+                    diskElement.style.background = `radial-gradient(circle, ${this.color}, #800000)`;
+                    diskElement.style.position = 'absolute';
+                    diskElement.style.left = `${this.position.x - this.radius}px`;
+                    diskElement.style.top = `${this.position.y - this.radius}px`;
+                    board.appendChild(diskElement);
+                    return diskElement;
+                }
             }
-        }
 
-        function dropDisk() {
-            const disk = document.createElement('div');
-            disk.className = 'disk';
-            board.appendChild(disk);
+            function createPlinkoBoard() {
+                const rows = 14;
+                const pegSize = 10;
+                const rowSpacing = pegSize * 5.5;
+                const colSpacing = pegSize * 5.5;
 
-            const diskSize = 30;
-            disk.style.width = `${diskSize}px`;
-            disk.style.height = `${diskSize}px`;
-            disk.style.borderRadius = '50%';
-            disk.style.background = 'red';
-            disk.style.position = 'absolute';
-            disk.style.left = `${Math.random() * (board.clientWidth - diskSize)}px`;
-            disk.style.top = '0px';
+                for (let row = 1; row < rows; row++) {
+                    for (let col = 0; col <= row; col++) {
+                        const wall = new Disk(
+                            (board.clientWidth / 2) - ((row * colSpacing) / 2) + col * colSpacing,
+                            row * rowSpacing,
+                            7,
+                            '#ff0'
+                        );
+                        walls.push(wall);
+                        wall.render();
+                    }
+                }
 
-            const fallDuration = 2000; // milliseconds
+                // Create scoring slots
+                const slotWidth = 40;
+                const slotHeight = 20;
+                const spacing = board.clientWidth / numberOfSlots;
 
-            disk.animate([
-                { top: '0px' },
-                { top: `${board.clientHeight - diskSize}px` }
-            ], {
-                duration: fallDuration,
-                easing: 'ease-out'
-            }).onfinish = () => {
-                // Calculate score based on where the disk lands
-                const diskRect = disk.getBoundingClientRect();
-                const boardRect = board.getBoundingClientRect();
-                const landingPosition = Math.floor((diskRect.left - boardRect.left) / (board.clientWidth / 10));
-                const points = 100 - Math.abs(5 - landingPosition) * 10;
-                score += points;
-                scoreDisplay.textContent = `Score: ${score}`;
-                disk.remove();
-            };
-        }
+                for (let i = 0; i < numberOfSlots; i++) {
+                    const multiplier = (i + 1) * (maxScoreMultiplier / numberOfSlots);
+                    const slot = document.createElement('div');
+                    slot.className = 'slot';
+                    slot.style.width = `${slotWidth}px`;
+                    slot.style.height = `${slotHeight}px`;
+                    slot.style.left = `${i * spacing}px`;
+                    slot.style.top = `${board.clientHeight - slotHeight}px`;
+                    slot.textContent = `x${(multiplier / 100)}`;
+                    slot.dataset.multiplier = multiplier;
+                    board.appendChild(slot);
+                }
+            }
 
-        createPlinkoBoard();
+            function dropDisk() {
+                const disk = new Disk(board.clientWidth / 2, 0, 10, '#ff0000');
+                const diskElement = disk.render();
+                const animationDuration = 1000; // in milliseconds
 
-        dropButton.addEventListener('click', dropDisk);
-    });
+                function animateDisk(timestamp) {
+                    disk.update();
+                    diskElement.style.left = `${disk.position.x - disk.radius}px`;
+                    diskElement.style.top = `${disk.position.y - disk.radius}px`;
+
+                    if (disk.position.y < board.clientHeight - disk.radius) {
+                        requestAnimationFrame(animateDisk);
+                    } else {
+                        // Check which slot the disk landed in
+                        const slots = document.querySelectorAll('.slot');
+                        for (let slot of slots) {
+                            const rect = slot.getBoundingClientRect();
+                            const diskRect = diskElement.getBoundingClientRect();
+                            if (
+                                diskRect.left + diskRect.width > rect.left &&
+                                diskRect.left < rect.left + rect.width &&
+                                diskRect.top + diskRect.height > rect.top &&
+                                diskRect.top < rect.top + rect.height
+                            ) {
+                                const multiplier = parseFloat(slot.dataset.multiplier);
+                                const roundScore = Math.round(score * multiplier);
+                                score += roundScore;
+                                scoreDisplay.textContent = `Score: ${score}`;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                animateDisk();
+            }
+
+            const walls = [];
+            dropButton.addEventListener('click', dropDisk);
+            createPlinkoBoard();
+        });
     </script>
 </body>
 </html>

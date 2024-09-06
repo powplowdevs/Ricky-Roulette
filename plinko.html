@@ -90,6 +90,80 @@
             margin-top: 20px;
             font-size: 20px;
         }
+        #freakbob-call {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        color: #fff;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
+        transform: translateY(-100%);
+        transition: transform 0.5s ease-in-out;
+        }
+        #freakbob-call.show {
+            transform: translateY(0);
+        }
+        #freakbob-popup {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-out;
+        }
+        #freakbob-popup img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid #fff;
+        }
+        #freakbob-popup h2 {
+            margin: 0;
+            font-size: 18px;
+            text-align: center;
+        }
+        #freakbob-popup button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+        #answer-button {
+            background-color: #28a745;
+        }
+        #hangup-button {
+            background-color: #dc3545;
+        }
+        #answer-button:hover {
+            background-color: #218838;
+        }
+        #hangup-button:hover {
+            background-color: #c82333;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                }
+                to {
+                    transform: translateX(0);
+                }
+            }
+
     </style>
 </head>
 <body>
@@ -100,11 +174,22 @@
         </ul>
     </nav>
 
+    <div id="freakbob-call">
+        <div id="freakbob-popup">
+            <h2>Freak Bob is Calling...</h2>
+            <img src="freakbob.jpg" alt="Freak Bob">
+            <button id="answer-button" onclick='answerCall'>Answer</button>
+            <button id="hangup-button" onclick="endCall">Hang Up</button>
+        </div>
+    </div>
+    
+
     <div id="plinko-container">
         <h1>Crazy Plinko Game</h1>
         <div id="board"></div>
         <button id="drop-button">Drop Disk</button>
-        <div id="score">Score: 0</div>
+        <div id="cost">Drop cost: 10</div>
+        <div id="score">Cash: 100</div>
     </div>
 
     <script>
@@ -112,7 +197,7 @@
             const board = document.getElementById('board');
             const dropButton = document.getElementById('drop-button');
             const scoreDisplay = document.getElementById('score');
-            let score = 1;
+            let score = 100;
 
             // Constants
             const gravity = 0.2;
@@ -233,6 +318,7 @@
                 const rowSpacing = pegSize * 5.5;
                 const colSpacing = pegSize * 5.5;
 
+                // Create pegs
                 for (let row = 1; row < rows; row++) {
                     for (let col = 0; col <= row; col++) {
                         const wall = new Disk(
@@ -247,28 +333,37 @@
                 }
 
                 // Create scoring slots
-                const slotWidth = 40;
+                const slotWidth = 60;  // Adjusted to be wider for better fit
                 const slotHeight = 20;
+                const multipliers = [0.2, 0.4, 0.8, 1, 2, 5, 10, 25, 30, 50, 100];
+                const numberOfSlots = multipliers.length;
                 const spacing = board.clientWidth / numberOfSlots;
 
                 for (let i = 0; i < numberOfSlots; i++) {
-                    const multiplier = (i + 1) * (maxScoreMultiplier / numberOfSlots);
+                    // Reverse multiplier array
+                    const multiplier = multipliers[numberOfSlots - 1 - i];
                     const slot = document.createElement('div');
                     slot.className = 'slot';
                     slot.style.width = `${slotWidth}px`;
                     slot.style.height = `${slotHeight}px`;
                     slot.style.left = `${i * spacing}px`;
                     slot.style.top = `${board.clientHeight - slotHeight}px`;
-                    slot.textContent = `x${(multiplier / 100)}`;
+                    slot.textContent = `x${multiplier}`;
                     slot.dataset.multiplier = multiplier;
                     board.appendChild(slot);
                 }
             }
 
+
             function dropDisk() {
                 const disk = new Disk(board.clientWidth / 2, 0, 10, '#ff0000');
                 const diskElement = disk.render();
                 const animationDuration = 1000; // in milliseconds
+
+                let oldSCore = score
+                score -= 10;
+                scoreDisplay.textContent = `Cash: ${score}`;
+                scoreDisplay.style.color = oldSCore <= score ? 'green' : 'red';
 
                 function animateDisk(timestamp) {
                     disk.update();
@@ -280,6 +375,7 @@
                     } else {
                         // Check which slot the disk landed in
                         const slots = document.querySelectorAll('.slot');
+                        let landedInSlot = false;
                         for (let slot of slots) {
                             const rect = slot.getBoundingClientRect();
                             const diskRect = diskElement.getBoundingClientRect();
@@ -290,22 +386,177 @@
                                 diskRect.top < rect.top + rect.height
                             ) {
                                 const multiplier = parseFloat(slot.dataset.multiplier);
-                                const roundScore = Math.round(score * multiplier);
+                                const roundScore = 10 * multiplier;
                                 score += roundScore;
-                                scoreDisplay.textContent = `Score: ${score}`;
+
+                                // Update score display color
+                                scoreDisplay.textContent = `Cash: ${score}`;
+                                scoreDisplay.style.color = oldSCore <= score ? 'green' : 'red';
+
+                                landedInSlot = true;
                                 break;
                             }
                         }
+                        if (!landedInSlot) {
+                            // Handle case where disk doesn't land in any slot (if necessary)
+                            console.log('Disk did not land in any slot.');
+                        }
+                        // Remove the disk element from the DOM after it lands
+                        diskElement.remove();
                     }
                 }
 
+                // Start the animation
                 animateDisk();
             }
+
+
 
             const walls = [];
             dropButton.addEventListener('click', dropDisk);
             createPlinkoBoard();
+
+            let notificationElement;
+            let isInCall = false;
+            let isRing = false
+            let ringAudio;
+            let callAudio;
+
+            // Updated showCallNotification function
+            function showCallNotification(isIncoming) {
+                isRing = true;
+                if (notificationElement) {
+                    notificationElement.remove();
+                }
+
+                notificationElement = document.createElement('div');
+                notificationElement.className = 'notification';
+                notificationElement.style.position = 'fixed';
+                notificationElement.style.top = '10px';
+                notificationElement.style.right = '10px';
+                notificationElement.style.background = '#333';
+                notificationElement.style.color = '#fff';
+                notificationElement.style.padding = '10px';
+                notificationElement.style.borderRadius = '5px';
+                notificationElement.style.zIndex = '9999';
+                notificationElement.style.display = 'flex';
+                notificationElement.style.alignItems = 'center';
+                notificationElement.style.justifyContent = 'space-between';
+                notificationElement.style.animation = 'slideIn 0.5s ease-out';
+
+                const text = document.createElement('span');
+                text.id = 'notification-text';
+                text.textContent = isIncoming ? 'Incoming Call' : 'In Call';
+                notificationElement.appendChild(text);
+
+                const hangupButton = document.createElement('button');
+                hangupButton.textContent = 'Hang Up';
+                hangupButton.style.marginLeft = '10px';
+                hangupButton.style.borderRadius = '50%';
+                hangupButton.style.background = '#dc3545';
+                hangupButton.style.color = '#fff';
+                hangupButton.onclick = () => {
+                    endCall();
+                    closeNotification();
+                    clearTimeout(ringTimeout); 
+                };
+                notificationElement.appendChild(hangupButton);
+
+                const pickupButton = document.createElement('button');
+                pickupButton.textContent = 'Answer';
+                pickupButton.style.marginLeft = '10px';
+                pickupButton.style.borderRadius = '50%';
+                pickupButton.style.background = '#28a745';
+                pickupButton.style.color = '#fff';
+                pickupButton.onclick = () => {
+                    answerCall();
+                    if (isIncoming) {
+                        isInCall = true;
+                        text.textContent = 'In Call';
+                    }
+                    clearTimeout(ringTimeout); 
+                };
+                notificationElement.appendChild(pickupButton);
+
+                document.body.appendChild(notificationElement);
+
+                // Play ringing sound
+                ringAudio = new Audio('ring.mp3');
+                ringAudio.play();
+
+                // Set timeout to automatically end the call after 15 seconds
+                ringTimeout = setTimeout(() => {
+                    endCall();
+                    closeNotification();
+                }, 15000); // Adjust the duration as needed
+            }
+            
+
+            // Close the notification
+            function closeNotification() {
+                if (notificationElement) {
+                    notificationElement.remove();
+                    notificationElement = null;
+                }
+            }
+
+            // Answer the call
+            function answerCall() {
+                if (ringAudio) {
+                    ringAudio.pause();
+                    ringAudio.currentTime = 0;
+                }
+                callAudio = new Audio('call1.mp3');
+                callAudio.play();
+
+                // Hide notification after the call audio ends
+                callAudio.addEventListener('ended', () => {
+                    closeNotification();
+                    isInCall = false;
+                });
+
+                console.log('Call answered');
+            }
+
+            // End the call
+            function endCall() {
+                isRing = false
+                if (ringAudio) {
+                    ringAudio.pause();
+                    ringAudio.currentTime = 0;
+                }
+                if (callAudio) {
+                    callAudio.pause();
+                    callAudio.currentTime = 0;
+                }
+                console.log('Call ended');
+            }
+
+            // Trigger a call notification for testing
+            function triggerCall() {
+                showCallNotification(true);
+            }
+
+            function getRandomNumber(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            
+            function startAutoCalls() {
+                const callInterval = getRandomNumber(5000, 9000);; // Time between calls in milliseconds (e.g., 10 seconds)
+                
+                setInterval(() => {
+                    if (!isInCall && !isRing && Math.random() < 0.33) {
+                        triggerCall();
+                    }
+                }, callInterval);
+            }
+
+            // Call the function to start auto calls
+            startAutoCalls();
         });
+
+        
     </script>
 </body>
 </html>

@@ -114,8 +114,8 @@
             animation: fadeIn 1s ease-out;
         }
         #freakbob-popup img {
-            width: 80px;
-            height: 80px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             margin-bottom: 15px;
             border: 3px solid #fff;
@@ -444,9 +444,15 @@
                 notificationElement.style.justifyContent = 'space-between';
                 notificationElement.style.animation = 'slideIn 0.5s ease-out';
 
+                const freakyImg = document.createElement('img')
+                freakyImg.src = 'freakbob.jpg';
+                freakyImg.width = '40'
+                freakyImg.height = '40'
+                notificationElement.appendChild(freakyImg)
+
                 const text = document.createElement('span');
                 text.id = 'notification-text';
-                text.textContent = isIncoming ? 'Incoming Call' : 'In Call';
+                text.textContent = isIncoming ? 'Incoming 𝓯𝓻𝓮𝓪𝓴𝔂 Call' : 'In 𝓯𝓻𝓮𝓪𝓴𝔂 Call';
                 notificationElement.appendChild(text);
 
                 const hangupButton = document.createElement('button');
@@ -461,6 +467,8 @@
                     clearTimeout(ringTimeout); 
                 };
                 notificationElement.appendChild(hangupButton);
+
+               
 
                 const pickupButton = document.createElement('button');
                 pickupButton.textContent = 'Answer';

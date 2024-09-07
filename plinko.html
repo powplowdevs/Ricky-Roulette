@@ -480,7 +480,7 @@
                     answerCall();
                     if (isIncoming) {
                         isInCall = true;
-                        text.textContent = 'In Call';
+                        text.textContent = 'In 𝓯𝓻𝓮𝓪𝓴𝔂 Call';
                     }
                     clearTimeout(ringTimeout); 
                 };
@@ -489,8 +489,15 @@
                 document.body.appendChild(notificationElement);
 
                 // Play ringing sound
-                ringAudio = new Audio('ring.mp3');
-                ringAudio.play();
+                if(ringAudio){
+                    ringAudio.pause();
+                    ringAudio.currentTime = 0;
+                    ringAudio.play()
+                }
+                else{
+                    ringAudio = new Audio('ring.mp3');
+                    ringAudio.play();
+                }
 
                 // Set timeout to automatically end the call after 15 seconds
                 ringTimeout = setTimeout(() => {
@@ -510,6 +517,7 @@
 
             // Answer the call
             function answerCall() {
+                isRing = false
                 if (ringAudio) {
                     ringAudio.pause();
                     ringAudio.currentTime = 0;

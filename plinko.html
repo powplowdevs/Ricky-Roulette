@@ -537,6 +537,7 @@
             // End the call
             function endCall() {
                 isRing = false
+                isInCall = false
                 if (ringAudio) {
                     ringAudio.pause();
                     ringAudio.currentTime = 0;

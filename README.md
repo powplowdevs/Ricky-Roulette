@@ -5,6 +5,8 @@ Digital manifestation of the consequences of human development... Anyways play n
 
 ### Created by Ayoub and Ricky by asking <sub>(forceing)</sub> ChatGPT to write the code for us....
 
+###KILL YOURSELF NICHOLAS
+
 Welcome to **Ricky Roulette**—the game you never knew you needed, and the game you will need for eveyday to come. Not only is it great fun, but its also <sub><sup>(probably)</sub></sup> good for your health!
 
 ## Features

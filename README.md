@@ -5,7 +5,7 @@ Digital manifestation of the consequences of human development... Anyways play n
 
 ### Created by Ayoub and Ricky by asking <sub>(forceing)</sub> ChatGPT to write the code for us....
 
-### Latest update:KILL YOURSELF NICHOLAS
+### Latest update: ask Rick ren (other contributor)
 
 Welcome to **Ricky Roulette**—the game you never knew you needed, and the game you will need for eveyday to come. Not only is it great fun, but its also <sub><sup>(probably)</sub></sup> good for your health!
 
@@ -64,6 +64,7 @@ Why in the hell would you want your name on this? (hmu tho if u trynna add somet
 6. Many poor souls who have been forced to "play test"
 8. Jack
 7. Dani
+9. Mr Kim
 
 ## Requested features
 1. Chun lee added to battle pass
